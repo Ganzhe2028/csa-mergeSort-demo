@@ -30,10 +30,10 @@ const SortingStage: React.FC<SortingStageProps> = ({ nodes }) => {
           // Sort logic ensures they appear in correct visual order if needed
           // Usually group ID should correlate with position, but merge sort splits left/right.
           // We can sort by 'group' index to ensure consistent order.
-          nodesInDepth.sort((a, b) => a.group - b.group);
+          const sortedNodesInDepth = [...nodesInDepth].sort((a, b) => a.group - b.group);
 
           // Group nodes by their group ID for visual separation
-          const groups = nodesInDepth.reduce((acc, node) => {
+          const groups = sortedNodesInDepth.reduce((acc, node) => {
             if (!acc[node.group]) acc[node.group] = [];
             acc[node.group].push(node);
             return acc;
@@ -51,9 +51,11 @@ const SortingStage: React.FC<SortingStageProps> = ({ nodes }) => {
             >
               {groupIds.map((groupId) => (
                 <div key={groupId} className="flex gap-2 p-2 bg-gray-800/30 rounded-lg border border-gray-700/30">
-                  {groups[groupId].map((node) => (
-                    <NumberBlock key={node.id} node={node} />
-                  ))}
+                  {[...groups[groupId]]
+                    .sort((a, b) => a.sortIndex - b.sortIndex)
+                    .map((node) => (
+                      <NumberBlock key={node.id} node={node} />
+                    ))}
                 </div>
               ))}
             </motion.div>

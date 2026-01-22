@@ -3,11 +3,12 @@ import type { SortNode } from '../types';
 import { sleep } from '../utils/sleep';
 
 const generateInitialNodes = (count: number): SortNode[] => {
-  return Array.from({ length: count }, () => ({
+  return Array.from({ length: count }, (_, i) => ({
     id: crypto.randomUUID(),
     value: Math.floor(Math.random() * 99) + 1,
     depth: 0,
     group: 0,
+    sortIndex: i,
     color: 'default',
   }));
 };
@@ -147,6 +148,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
 
     let i = 0;
     let j = 0;
+    let nextSortIndex = 0;
 
     while (i < left.length && j < right.length) {
       await wait(10); // while
@@ -164,7 +166,8 @@ export const useMergeSort = (): UseMergeSortReturn => {
         const updated = updateNodeState(leftNode.id, {
             color: 'sorted',
             depth: targetDepth,
-            group: targetGroup
+            group: targetGroup,
+            sortIndex: nextSortIndex++
         });
         sorted.push(updated);
         i++;
@@ -174,7 +177,8 @@ export const useMergeSort = (): UseMergeSortReturn => {
         const updated = updateNodeState(rightNode.id, {
             color: 'sorted',
             depth: targetDepth,
-            group: targetGroup
+            group: targetGroup,
+            sortIndex: nextSortIndex++
         });
         sorted.push(updated);
         j++;
@@ -191,7 +195,8 @@ export const useMergeSort = (): UseMergeSortReturn => {
        const updated = updateNodeState(node.id, {
          color: 'sorted',
          depth: targetDepth,
-         group: targetGroup
+         group: targetGroup,
+         sortIndex: nextSortIndex++
        });
        sorted.push(updated);
        i++;
@@ -204,7 +209,8 @@ export const useMergeSort = (): UseMergeSortReturn => {
         const updated = updateNodeState(node.id, {
           color: 'sorted',
           depth: targetDepth,
-          group: targetGroup
+          group: targetGroup,
+          sortIndex: nextSortIndex++
         });
         sorted.push(updated);
         j++;
