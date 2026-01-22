@@ -128,9 +128,10 @@ export const useMergeSort = (): UseMergeSortReturn => {
 
   const merge = async (left: SortNode[], right: SortNode[], targetDepth: number, targetGroup: number): Promise<SortNode[]> => {
     const sorted: SortNode[] = [];
+    // Work with a local copy that tracks updates, initialized from latest ref
     const globalNodes = [...nodesRef.current];
 
-    // Helper to update specific node in global state
+    // Helper to update specific node in global state copy
     const updateNodeState = (id: string, updates: Partial<SortNode>) => {
        const idx = globalNodes.findIndex(n => n.id === id);
        if (idx !== -1) {
@@ -153,32 +154,22 @@ export const useMergeSort = (): UseMergeSortReturn => {
       await wait();
 
       if (leftNode.value <= rightNode.value) {
-        // Left is smaller
-        // Move to sorted position (up one level)
-        // Mark as sorted
-        updateNodeState(leftNode.id, {
+        const updated = updateNodeState(leftNode.id, {
             color: 'sorted',
             depth: targetDepth,
             group: targetGroup
         });
-        sorted.push(leftNode);
+        sorted.push(updated);
         i++;
       } else {
-        // Right is smaller
-        updateNodeState(rightNode.id, {
+        const updated = updateNodeState(rightNode.id, {
             color: 'sorted',
             depth: targetDepth,
             group: targetGroup
         });
-        sorted.push(rightNode);
+        sorted.push(updated);
         j++;
       }
-
-      // Reset color of the one that wasn't picked? Or keep comparing?
-      // Actually usually we un-highlight the one that was picked.
-      // Let's un-highlight both for a moment or just proceed.
-      // If we loop again, we'll highlight new pair.
-      // If loop finishes, we need to handle remainders.
 
       updateNodes([...globalNodes]);
       await wait();
@@ -187,33 +178,47 @@ export const useMergeSort = (): UseMergeSortReturn => {
     // Handle remaining
     while (i < left.length) {
        const node = left[i];
-       updateNodeState(node.id, {
+       const updated = updateNodeState(node.id, {
          color: 'sorted',
          depth: targetDepth,
          group: targetGroup
        });
-       sorted.push(node);
+       sorted.push(updated);
        i++;
     }
 
     while (j < right.length) {
         const node = right[j];
-        updateNodeState(node.id, {
+        const updated = updateNodeState(node.id, {
           color: 'sorted',
           depth: targetDepth,
           group: targetGroup
         });
-        sorted.push(node);
+        sorted.push(updated);
         j++;
+    }
+
+    // VISUAL REORDERING:
+    // Identify the indices in the global array that the `left` and `right` nodes currently occupy.
+    // Replace the nodes at these indices with the re-ordered `sorted` nodes.
+    const allIds = new Set([...left, ...right].map(n => n.id));
+    const indicesToUpdate = globalNodes
+        .map((n, idx) => allIds.has(n.id) ? idx : -1)
+        .filter(idx => idx !== -1)
+        // Sort indices to fill them in order with the sorted nodes
+        .sort((a, b) => a - b);
+
+    if (indicesToUpdate.length !== sorted.length) {
+        console.error('Mismatch in indices vs sorted length', indicesToUpdate.length, sorted.length);
+    } else {
+        indicesToUpdate.forEach((globalIdx, sortedIdx) => {
+            // sorted[sortedIdx] has the correct value order and updated metadata
+            globalNodes[globalIdx] = sorted[sortedIdx];
+        });
     }
 
     updateNodes([...globalNodes]);
     await wait();
-
-    // Reset colors to default after merge (optional, or keep green until very end)
-    // PRD says: "Update visual position... Update color to 'green' (sorted)."
-    // Usually eventually they turn back to default or stay green.
-    // Let's keep them green to show this segment is sorted.
 
     return sorted;
   };
