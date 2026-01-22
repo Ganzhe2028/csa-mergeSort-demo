@@ -6,6 +6,7 @@ export interface SortNode {
   depth: number;   // Visual depth (row)
   group: number;   // Visual group index
   color: SortColor; // Visual state
+  position: number; // Position within group (for sorted ordering)
 }
 
 export type RecursionPath = string[]; // e.g. ["root", "left", "right"]

@@ -51,7 +51,9 @@ const SortingStage: React.FC<SortingStageProps> = ({ nodes }) => {
             >
               {groupIds.map((groupId) => (
                 <div key={groupId} className="flex gap-2 p-2 bg-gray-800/30 rounded-lg border border-gray-700/30">
-                  {groups[groupId].map((node) => (
+                  {groups[groupId]
+                    .sort((a, b) => a.position - b.position)
+                    .map((node) => (
                     <NumberBlock key={node.id} node={node} />
                   ))}
                 </div>

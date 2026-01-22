@@ -3,12 +3,13 @@ import type { SortNode } from '../types';
 import { sleep } from '../utils/sleep';
 
 const generateInitialNodes = (count: number): SortNode[] => {
-  return Array.from({ length: count }, () => ({
+  return Array.from({ length: count }, (_, index) => ({
     id: crypto.randomUUID(),
     value: Math.floor(Math.random() * 99) + 1,
     depth: 0,
     group: 0,
     color: 'default',
+    position: index,
   }));
 };
 
@@ -159,7 +160,8 @@ export const useMergeSort = (): UseMergeSortReturn => {
         updateNodeState(leftNode.id, {
             color: 'sorted',
             depth: targetDepth,
-            group: targetGroup
+            group: targetGroup,
+            position: sorted.length
         });
         sorted.push(leftNode);
         i++;
@@ -168,7 +170,8 @@ export const useMergeSort = (): UseMergeSortReturn => {
         updateNodeState(rightNode.id, {
             color: 'sorted',
             depth: targetDepth,
-            group: targetGroup
+            group: targetGroup,
+            position: sorted.length
         });
         sorted.push(rightNode);
         j++;
@@ -190,7 +193,8 @@ export const useMergeSort = (): UseMergeSortReturn => {
        updateNodeState(node.id, {
          color: 'sorted',
          depth: targetDepth,
-         group: targetGroup
+         group: targetGroup,
+         position: sorted.length
        });
        sorted.push(node);
        i++;
@@ -201,7 +205,8 @@ export const useMergeSort = (): UseMergeSortReturn => {
         updateNodeState(node.id, {
           color: 'sorted',
           depth: targetDepth,
-          group: targetGroup
+          group: targetGroup,
+          position: sorted.length
         });
         sorted.push(node);
         j++;
