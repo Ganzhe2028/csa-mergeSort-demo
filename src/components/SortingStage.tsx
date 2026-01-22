@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import type { SortNode } from '../types';
 import NumberBlock from './NumberBlock';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,31 +8,36 @@ interface SortingStageProps {
 }
 
 const SortingStage: React.FC<SortingStageProps> = ({ nodes }) => {
-  // 1. Group nodes by depth
+  const activeRowRef = useRef<HTMLDivElement>(null);
+
   const nodesByDepth = nodes.reduce((acc, node) => {
     if (!acc[node.depth]) acc[node.depth] = [];
     acc[node.depth].push(node);
     return acc;
   }, {} as Record<number, SortNode[]>);
 
-  // Get sorted depths
   const depths = Object.keys(nodesByDepth)
     .map(Number)
     .sort((a, b) => a - b);
+
+  const activeDepth = useMemo(() => {
+    const comparingNode = nodes.find(n => n.color === 'comparing');
+    return comparingNode?.depth ?? null;
+  }, [nodes]);
+
+  useEffect(() => {
+    if (activeDepth !== null && activeRowRef.current) {
+      activeRowRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [activeDepth, nodes]);
 
   return (
     <div className="flex-1 overflow-y-auto p-4 flex flex-col items-center gap-8 bg-gray-900 rounded-xl border border-gray-800 shadow-inner">
       <AnimatePresence>
         {depths.map((depth) => {
-          // 2. Inside each depth, group by 'group' ID
           const nodesInDepth = nodesByDepth[depth];
-
-          // Sort logic ensures they appear in correct visual order if needed
-          // Usually group ID should correlate with position, but merge sort splits left/right.
-          // We can sort by 'group' index to ensure consistent order.
           nodesInDepth.sort((a, b) => a.group - b.group);
 
-          // Group nodes by their group ID for visual separation
           const groups = nodesInDepth.reduce((acc, node) => {
             if (!acc[node.group]) acc[node.group] = [];
             acc[node.group].push(node);
@@ -40,10 +45,12 @@ const SortingStage: React.FC<SortingStageProps> = ({ nodes }) => {
           }, {} as Record<number, SortNode[]>);
 
           const groupIds = Object.keys(groups).map(Number).sort((a,b) => a - b);
+          const isActiveRow = depth === activeDepth;
 
           return (
             <motion.div
               key={depth}
+              ref={isActiveRow ? activeRowRef : null}
               className="flex gap-8 justify-center w-full"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
