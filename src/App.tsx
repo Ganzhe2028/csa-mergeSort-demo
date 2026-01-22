@@ -1,11 +1,12 @@
 import { useMergeSort } from './hooks/useMergeSort';
 import SortingStage from './components/SortingStage';
 import Dashboard from './components/Dashboard';
-import RecursionTree from './components/RecursionTree';
+import CodeViewer from './components/CodeViewer';
 
 function App() {
   const {
     nodes,
+    activeLine,
     isPlaying,
     play,
     pause,
@@ -36,8 +37,8 @@ function App() {
         <SortingStage nodes={nodes} />
       </main>
 
-      {/* Right Sidebar: Visualization Stats/Tree */}
-      <RecursionTree nodes={nodes} />
+      {/* Right Sidebar: Code Execution */}
+      <CodeViewer activeLine={activeLine} />
     </div>
   );
 }
