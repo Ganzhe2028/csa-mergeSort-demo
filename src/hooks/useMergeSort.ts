@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import type { SortNode } from '../types';
+import type { SortNode, ActiveGroup } from '../types';
 import { sleep } from '../utils/sleep';
 
 const generateInitialNodes = (count: number): SortNode[] => {
@@ -16,6 +16,7 @@ const generateInitialNodes = (count: number): SortNode[] => {
 interface UseMergeSortReturn {
   nodes: SortNode[];
   activeLine: number;
+  activeGroup: ActiveGroup | null;
   isPlaying: boolean;
   isSorted: boolean;
   speed: number;
@@ -34,6 +35,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isSorted, setIsSorted] = useState(false);
   const [activeLine, setActiveLine] = useState(-1);
+  const [activeGroup, setActiveGroup] = useState<ActiveGroup | null>(null);
 
   // Refs for logic control
   const nodesRef = useRef<SortNode[]>(nodes);
@@ -50,6 +52,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
     isPlayingRef.current = false;
     setIsSorted(false);
     setActiveLine(-1);
+    setActiveGroup(null);
     if (abortControllerRef.current) abortControllerRef.current.abort();
   }, [size]);
 
@@ -75,6 +78,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
   };
 
   const mergeSort = async (subsetNodes: SortNode[], depth: number, groupBase: number): Promise<SortNode[]> => {
+    setActiveGroup({ depth, group: groupBase });
     await wait(0); // function mergeSort
 
     await wait(1); // if len <= 1
@@ -130,6 +134,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
   };
 
   const merge = async (left: SortNode[], right: SortNode[], targetDepth: number, targetGroup: number): Promise<SortNode[]> => {
+    setActiveGroup({ depth: targetDepth, group: targetGroup });
     await wait(8); // function merge
     await wait(9); // result = []
 
@@ -255,6 +260,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
       isPlayingRef.current = false;
       setIsSorted(true);
       setActiveLine(-1);
+      setActiveGroup(null);
     } catch (e) {
       if ((e as Error).message === 'Aborted') {
         console.log('Sorting aborted');
@@ -300,11 +306,13 @@ export const useMergeSort = (): UseMergeSortReturn => {
     isPlayingRef.current = false;
     setIsSorted(false);
     setActiveLine(-1);
+    setActiveGroup(null);
   };
 
   return {
     nodes,
     activeLine,
+    activeGroup,
     isPlaying,
     isSorted,
     speed,

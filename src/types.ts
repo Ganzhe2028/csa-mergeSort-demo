@@ -9,4 +9,9 @@ export interface SortNode {
   color: SortColor; // Visual state
 }
 
+export interface ActiveGroup {
+  depth: number;
+  group: number;
+}
+
 export type RecursionPath = string[]; // e.g. ["root", "left", "right"]
