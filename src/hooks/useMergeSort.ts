@@ -14,6 +14,7 @@ const generateInitialNodes = (count: number): SortNode[] => {
 
 interface UseMergeSortReturn {
   nodes: SortNode[];
+  activeLine: number;
   isPlaying: boolean;
   isSorted: boolean;
   speed: number;
@@ -31,6 +32,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
   const [nodes, setNodes] = useState<SortNode[]>(() => generateInitialNodes(size));
   const [isPlaying, setIsPlaying] = useState(false);
   const [isSorted, setIsSorted] = useState(false);
+  const [activeLine, setActiveLine] = useState(-1);
 
   // Refs for logic control
   const nodesRef = useRef<SortNode[]>(nodes);
@@ -46,6 +48,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
     setIsPlaying(false);
     isPlayingRef.current = false;
     setIsSorted(false);
+    setActiveLine(-1);
     if (abortControllerRef.current) abortControllerRef.current.abort();
   }, [size]);
 
@@ -62,30 +65,30 @@ export const useMergeSort = (): UseMergeSortReturn => {
     }
   };
 
-  const wait = async () => {
+  const wait = async (line?: number) => {
+    if (line !== undefined) setActiveLine(line);
     await checkPause();
-    // Speed conversion: 1000ms (slow) to 50ms (fast)
-    // Speed input is likely 1-100? Or just ms directly?
-    // Let's assume speed state IS the delay in ms for now.
+    // Speed conversion: speed state IS the delay in ms.
     await sleep(speed);
     if (abortControllerRef.current?.signal.aborted) throw new Error('Aborted');
   };
 
   const mergeSort = async (subsetNodes: SortNode[], depth: number, groupBase: number): Promise<SortNode[]> => {
+    await wait(0); // function mergeSort
+
+    await wait(1); // if len <= 1
     if (subsetNodes.length <= 1) {
+      await wait(2); // return arr
       return subsetNodes;
     }
+
+    await wait(3); // mid = ...
 
     const mid = Math.floor(subsetNodes.length / 2);
     const leftPart = subsetNodes.slice(0, mid);
     const rightPart = subsetNodes.slice(mid);
 
     // DIVIDE STEP: Move down to next depth
-    // Update depth and group for visual split
-    // Left group: groupBase * 2
-    // Right group: groupBase * 2 + 1
-
-    // We need to update the GLOBAL nodes array based on IDs
     const currentGlobalNodes = [...nodesRef.current];
 
     // Update left part
@@ -113,20 +116,22 @@ export const useMergeSort = (): UseMergeSortReturn => {
     });
 
     updateNodes(currentGlobalNodes);
-    await wait();
+    await wait(); // Wait for visual split (keep previous line 3 active?)
 
-    // RECURSE
-    // Note: We need to pass the *updated* node objects (with new depth) but keeping their values
-    // Actually, values don't change, just metadata.
-
+    await wait(4); // left = mergeSort(...)
     const sortedLeft = await mergeSort(leftPart, depth + 1, groupBase * 2);
+
+    await wait(5); // right = mergeSort(...)
     const sortedRight = await mergeSort(rightPart, depth + 1, groupBase * 2 + 1);
 
-    // MERGE STEP
+    await wait(6); // return merge(...)
     return await merge(sortedLeft, sortedRight, depth, groupBase);
   };
 
   const merge = async (left: SortNode[], right: SortNode[], targetDepth: number, targetGroup: number): Promise<SortNode[]> => {
+    await wait(8); // function merge
+    await wait(9); // result = []
+
     const sorted: SortNode[] = [];
     // Work with a local copy that tracks updates, initialized from latest ref
     const globalNodes = [...nodesRef.current];
@@ -144,6 +149,8 @@ export const useMergeSort = (): UseMergeSortReturn => {
     let j = 0;
 
     while (i < left.length && j < right.length) {
+      await wait(10); // while
+
       const leftNode = left[i];
       const rightNode = right[j];
 
@@ -151,7 +158,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
       updateNodeState(leftNode.id, { color: 'comparing' });
       updateNodeState(rightNode.id, { color: 'comparing' });
       updateNodes([...globalNodes]);
-      await wait();
+      await wait(11); // if left <= right
 
       if (leftNode.value <= rightNode.value) {
         const updated = updateNodeState(leftNode.id, {
@@ -161,6 +168,8 @@ export const useMergeSort = (): UseMergeSortReturn => {
         });
         sorted.push(updated);
         i++;
+        updateNodes([...globalNodes]);
+        await wait(12); // append left
       } else {
         const updated = updateNodeState(rightNode.id, {
             color: 'sorted',
@@ -169,11 +178,12 @@ export const useMergeSort = (): UseMergeSortReturn => {
         });
         sorted.push(updated);
         j++;
+        updateNodes([...globalNodes]);
+        await wait(14); // append right
       }
-
-      updateNodes([...globalNodes]);
-      await wait();
     }
+
+    await wait(15); // append remaining
 
     // Handle remaining
     while (i < left.length) {
@@ -185,6 +195,8 @@ export const useMergeSort = (): UseMergeSortReturn => {
        });
        sorted.push(updated);
        i++;
+       updateNodes([...globalNodes]); // VISUAL UPDATE
+       await wait(); // SHORT WAIT
     }
 
     while (j < right.length) {
@@ -196,11 +208,11 @@ export const useMergeSort = (): UseMergeSortReturn => {
         });
         sorted.push(updated);
         j++;
+        updateNodes([...globalNodes]); // VISUAL UPDATE
+        await wait(); // SHORT WAIT
     }
 
-    // VISUAL REORDERING:
-    // Identify the indices in the global array that the `left` and `right` nodes currently occupy.
-    // Replace the nodes at these indices with the re-ordered `sorted` nodes.
+    // VISUAL REORDERING
     const allIds = new Set([...left, ...right].map(n => n.id));
     const indicesToUpdate = globalNodes
         .map((n, idx) => allIds.has(n.id) ? idx : -1)
@@ -218,13 +230,14 @@ export const useMergeSort = (): UseMergeSortReturn => {
     }
 
     updateNodes([...globalNodes]);
-    await wait();
+    await wait(); // Wait for visual reorder
 
+    await wait(16); // return result
     return sorted;
   };
 
   const startSort = async () => {
-    if (isPlaying || isSorted) return; // Prevent restart if running or done
+    if (isPlaying || isSorted) return;
 
     setIsPlaying(true);
     isPlayingRef.current = true;
@@ -235,6 +248,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
       setIsPlaying(false);
       isPlayingRef.current = false;
       setIsSorted(true);
+      setActiveLine(-1);
     } catch (e) {
       if ((e as Error).message === 'Aborted') {
         console.log('Sorting aborted');
@@ -249,8 +263,6 @@ export const useMergeSort = (): UseMergeSortReturn => {
   const play = () => {
     if (isSorted) {
       reset();
-      // Need to wait for reset to apply? Reset is sync for state, but effect runs later.
-      // We can just set internal state.
       setTimeout(() => {
           startSort();
       }, 0);
@@ -258,12 +270,6 @@ export const useMergeSort = (): UseMergeSortReturn => {
     }
 
     if (!isPlaying) {
-        // If it was paused, resume
-        // If it was never started, start
-        // My implementation of startSort assumes starting from scratch currently.
-        // But the generator/async function is paused in 'checkPause'.
-        // So just setting isPlayingRef.current = true should resume it if it's running.
-
         if (nodesRef.current.some(n => n.depth > 0) && !isSorted) {
             // It is in middle of sorting
             setIsPlaying(true);
@@ -287,10 +293,12 @@ export const useMergeSort = (): UseMergeSortReturn => {
     setIsPlaying(false);
     isPlayingRef.current = false;
     setIsSorted(false);
+    setActiveLine(-1);
   };
 
   return {
     nodes,
+    activeLine,
     isPlaying,
     isSorted,
     speed,

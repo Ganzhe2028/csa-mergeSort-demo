@@ -93,24 +93,22 @@ const Dashboard: React.FC<DashboardProps> = ({
           <div className="flex justify-between items-center">
             <label className="text-sm font-medium text-gray-300">Animation Speed</label>
             <span className="text-xs bg-gray-800 px-2 py-1 rounded text-gray-400">
-               {speed < 100 ? 'Fast' : speed > 800 ? 'Slow' : 'Normal'}
+               {speed < 150 ? 'Fast' : speed > 1500 ? 'Slow' : 'Normal'}
             </span>
           </div>
           {/* Speed: Higher value = Slower (more delay) */}
-          {/* Slider: Left (low value) = Slow? Or Left = Fast? */}
-          {/* Usually Right = Fast. So we invert logic for slider display vs value */}
-          {/* Let's say Slider 0-100. 0 = Slow (1000ms), 100 = Fast (50ms) */}
+          {/* Range: 50ms (Fast) to 2500ms (Slow) */}
+          {/* Slider: 0 (Slow, 2500ms) to 100 (Fast, 50ms) */}
           <input
             type="range"
             min="0"
             max="100"
-            value={100 - ((speed - 50) / (1000 - 50)) * 100}
+            value={100 - ((speed - 50) / (2500 - 50)) * 100}
             onChange={(e) => {
               const val = Number(e.target.value);
-              // Convert 0-100 back to 1000-50
               // val = 100 -> speed = 50
-              // val = 0 -> speed = 1000
-              const newSpeed = 1000 - (val / 100) * (950);
+              // val = 0 -> speed = 2500
+              const newSpeed = 2500 - (val / 100) * (2450);
               setSpeed(newSpeed);
             }}
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
