@@ -97,18 +97,18 @@ const Dashboard: React.FC<DashboardProps> = ({
             </span>
           </div>
           {/* Speed: Higher value = Slower (more delay) */}
-          {/* Range: 50ms (Fast) to 2500ms (Slow) */}
-          {/* Slider: 0 (Slow, 2500ms) to 100 (Fast, 50ms) */}
+          {/* Range: 1ms (Fast) to 2500ms (Slow) */}
+          {/* Slider: 0 (Slow, 2500ms) to 100 (Fast, 1ms) */}
           <input
             type="range"
             min="0"
             max="100"
-            value={100 - ((speed - 50) / (2500 - 50)) * 100}
+            value={100 - ((speed - 1) / (2500 - 1)) * 100}
             onChange={(e) => {
               const val = Number(e.target.value);
-              // val = 100 -> speed = 50
+              // val = 100 -> speed = 1
               // val = 0 -> speed = 2500
-              const newSpeed = 2500 - (val / 100) * (2450);
+              const newSpeed = 2500 - (val / 100) * (2499);
               setSpeed(newSpeed);
             }}
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
