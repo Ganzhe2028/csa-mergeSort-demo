@@ -195,6 +195,8 @@ export const useMergeSort = (): UseMergeSortReturn => {
        });
        sorted.push(updated);
        i++;
+       updateNodes([...globalNodes]); // VISUAL UPDATE
+       await wait(); // SHORT WAIT
     }
 
     while (j < right.length) {
@@ -206,6 +208,8 @@ export const useMergeSort = (): UseMergeSortReturn => {
         });
         sorted.push(updated);
         j++;
+        updateNodes([...globalNodes]); // VISUAL UPDATE
+        await wait(); // SHORT WAIT
     }
 
     // VISUAL REORDERING
