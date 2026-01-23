@@ -240,8 +240,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
         });
     }
 
-    updateNodes([...globalNodes]);
-    await wait(); // Wait for visual reorder
+    nodesRef.current = [...globalNodes];
 
     await wait(16); // return result
     return sorted;
