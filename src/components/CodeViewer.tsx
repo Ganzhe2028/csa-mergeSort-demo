@@ -19,7 +19,28 @@ const CodeViewer: React.FC<CodeViewerProps> = ({ activeLine }) => {
                 : ''
             }`}
           >
-            {line || ' '}
+            {(() => {
+              const parts = line.split('//');
+              const codePart = parts[0];
+              const commentPart = parts.length > 1 ? '//' + parts.slice(1).join('//') : '';
+
+              return (
+                <>
+                  <span>{codePart}</span>
+                  {commentPart && (
+                    <span
+                      className={`${
+                        activeLine === index
+                          ? 'text-gray-700 font-normal italic opacity-75' // Darker style on active yellow bg
+                          : 'text-green-500 italic' // Distinct green for comments on dark bg
+                      }`}
+                    >
+                      {commentPart}
+                    </span>
+                  )}
+                </>
+              );
+            })()}
           </div>
         ))}
       </div>

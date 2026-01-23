@@ -87,7 +87,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
       return subsetNodes;
     }
 
-    await wait(3); // mid = ...
+    await wait(4); // mid = ...
 
     const mid = Math.floor(subsetNodes.length / 2);
     const leftPart = subsetNodes.slice(0, mid);
@@ -123,20 +123,20 @@ export const useMergeSort = (): UseMergeSortReturn => {
     updateNodes(currentGlobalNodes);
     await wait(); // Wait for visual split (keep previous line 3 active?)
 
-    await wait(4); // left = mergeSort(...)
+    await wait(5); // left = mergeSort(...)
     const sortedLeft = await mergeSort(leftPart, depth + 1, groupBase * 2);
 
-    await wait(5); // right = mergeSort(...)
+    await wait(6); // right = mergeSort(...)
     const sortedRight = await mergeSort(rightPart, depth + 1, groupBase * 2 + 1);
 
-    await wait(6); // return merge(...)
+    await wait(7); // return merge(...)
     return await merge(sortedLeft, sortedRight, depth, groupBase);
   };
 
   const merge = async (left: SortNode[], right: SortNode[], targetDepth: number, targetGroup: number): Promise<SortNode[]> => {
     setActiveGroup({ depth: targetDepth, group: targetGroup });
-    await wait(8); // function merge
-    await wait(9); // result = []
+    await wait(10); // function merge
+    await wait(11); // result = []
 
     const sorted: SortNode[] = [];
     // Work with a local copy that tracks updates, initialized from latest ref
@@ -156,7 +156,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
     let nextSortIndex = 0;
 
     while (i < left.length && j < right.length) {
-      await wait(10); // while
+      await wait(12); // while
 
       const leftNode = left[i];
       const rightNode = right[j];
@@ -165,7 +165,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
       updateNodeState(leftNode.id, { color: 'comparing' });
       updateNodeState(rightNode.id, { color: 'comparing' });
       updateNodes([...globalNodes]);
-      await wait(11); // if left <= right
+      await wait(13); // if left <= right
 
       if (leftNode.value <= rightNode.value) {
         const updated = updateNodeState(leftNode.id, {
@@ -177,7 +177,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
         sorted.push(updated);
         i++;
         updateNodes([...globalNodes]);
-        await wait(12); // append left
+        await wait(14); // append left
       } else {
         const updated = updateNodeState(rightNode.id, {
             color: 'sorted',
@@ -188,11 +188,11 @@ export const useMergeSort = (): UseMergeSortReturn => {
         sorted.push(updated);
         j++;
         updateNodes([...globalNodes]);
-        await wait(14); // append right
+        await wait(16); // append right
       }
     }
 
-    await wait(15); // append remaining
+    await wait(19); // append remaining
 
     // Handle remaining
     while (i < left.length) {
@@ -242,7 +242,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
 
     nodesRef.current = [...globalNodes];
 
-    await wait(16); // return result
+    await wait(20); // return result
     return sorted;
   };
 
