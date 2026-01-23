@@ -31,9 +31,6 @@ const Dashboard: React.FC<DashboardProps> = ({
           <Settings className="w-6 h-6 text-blue-500" />
           Merge Sort
         </h1>
-        <p className="text-gray-400 text-sm">
-          Interactive visualization of the Merge Sort algorithm using physical separation.
-        </p>
       </div>
 
       {/* Controls */}

@@ -21,13 +21,13 @@ function App() {
   return (
     <div className="flex flex-col h-screen w-screen bg-gray-950 text-white overflow-hidden font-sans">
       {/* Top: Stage (65vh) */}
-      <main style={{ height: '65vh' }} className="w-full relative bg-gradient-to-br from-gray-900 to-gray-950 overflow-hidden border-b border-gray-800">
+      <main style={{ height: '60vh' }} className="w-full relative bg-gradient-to-br from-gray-900 to-gray-950 overflow-hidden border-b border-gray-800">
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
         <SortingStage nodes={nodes} activeGroup={activeGroup} />
       </main>
 
       {/* Bottom: Split Panel */}
-      <div className="flex-1 flex flex-row w-full z-20 bg-gray-900">
+      <div className="h-[40vh] flex flex-row w-full z-20 bg-gray-900 overflow-y-auto">
         {/* Bottom Left: Controls (25%) */}
         <div className="w-[25%] h-full border-r border-gray-800">
           <Dashboard
