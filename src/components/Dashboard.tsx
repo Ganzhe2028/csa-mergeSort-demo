@@ -25,9 +25,9 @@ const Dashboard: React.FC<DashboardProps> = ({
   disabled
 }) => {
   return (
-    <div className="w-full md:w-80 bg-gray-900 border-r border-gray-800 p-6 flex flex-col gap-8 h-full shadow-xl z-10">
+    <div className="w-full h-full bg-gray-900 p-6 flex flex-col gap-6 overflow-y-auto shadow-xl z-10">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+        <h1 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
           <Settings className="w-6 h-6 text-blue-500" />
           Merge Sort
         </h1>
