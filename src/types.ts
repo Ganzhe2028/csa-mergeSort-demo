@@ -5,7 +5,13 @@ export interface SortNode {
   value: number;   // The numeric value
   depth: number;   // Visual depth (row)
   group: number;   // Visual group index
+  sortIndex: number; // Visual order within the group
   color: SortColor; // Visual state
+}
+
+export interface ActiveGroup {
+  depth: number;
+  group: number;
 }
 
 export type RecursionPath = string[]; // e.g. ["root", "left", "right"]
