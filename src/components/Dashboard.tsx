@@ -29,7 +29,7 @@ const Dashboard: React.FC<DashboardProps> = ({
       <div>
         <h1 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
           <Settings className="w-6 h-6 text-blue-500" />
-          Merge Sort
+          <a href="https://mergesort.isaacbao.cn">Merge Sort</a>
         </h1>
       </div>
 
