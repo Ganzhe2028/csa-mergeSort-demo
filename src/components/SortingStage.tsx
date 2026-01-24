@@ -126,8 +126,8 @@ const SortingStage: React.FC<SortingStageProps> = ({ nodes, activeGroup }) => {
             <motion.div
               key={depth}
               className="flex gap-8 justify-center w-full"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={false}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
               {groupIds.map((groupId) => (
