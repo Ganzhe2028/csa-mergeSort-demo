@@ -121,6 +121,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
     });
 
     updateNodes(currentGlobalNodes);
+    setActiveGroup({ depth: depth + 1, group: groupBase * 2 }); // Focus on the upcoming left group immediately so camera follows the split
     await wait(); // Wait for visual split (keep previous line 3 active?)
 
     await wait(5); // left = mergeSort(...)
@@ -156,7 +157,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
     let nextSortIndex = 0;
 
     while (i < left.length && j < right.length) {
-      await wait(12); // while
+      await wait(14); // while
 
       const leftNode = left[i];
       const rightNode = right[j];
@@ -165,7 +166,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
       updateNodeState(leftNode.id, { color: 'comparing' });
       updateNodeState(rightNode.id, { color: 'comparing' });
       updateNodes([...globalNodes]);
-      await wait(13); // if left <= right
+      await wait(15); // if left <= right
 
       if (leftNode.value <= rightNode.value) {
         const updated = updateNodeState(leftNode.id, {
@@ -177,7 +178,7 @@ export const useMergeSort = (): UseMergeSortReturn => {
         sorted.push(updated);
         i++;
         updateNodes([...globalNodes]);
-        await wait(14); // append left
+        await wait(16); // append left
       } else {
         const updated = updateNodeState(rightNode.id, {
             color: 'sorted',
@@ -188,11 +189,11 @@ export const useMergeSort = (): UseMergeSortReturn => {
         sorted.push(updated);
         j++;
         updateNodes([...globalNodes]);
-        await wait(16); // append right
+        await wait(18); // append right
       }
     }
 
-    await wait(19); // append remaining
+    // Skipped wait(21) as it was a comment-only line
 
     // Handle remaining
     while (i < left.length) {
