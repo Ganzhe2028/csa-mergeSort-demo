@@ -10,7 +10,7 @@ const generateInitialNodes = (count: number): SortNode[] => {
     group: 0,
     sortIndex: i,
     color: 'default',
-    position: index,
+    position: i,
   }));
 };
 

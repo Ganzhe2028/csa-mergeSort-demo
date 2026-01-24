@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect, useState } from 'react';
+import React, { useRef, useLayoutEffect, useState, useMemo, useEffect } from 'react';
 import type { SortNode, ActiveGroup } from '../types';
 import NumberBlock from './NumberBlock';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,6 +11,7 @@ interface SortingStageProps {
 const SortingStage: React.FC<SortingStageProps> = ({ nodes, activeGroup }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const activeRowRef = useRef<HTMLDivElement>(null);
   const [viewState, setViewState] = useState({ x: 0, y: 0, scale: 1 });
 
   useLayoutEffect(() => {
