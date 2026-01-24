@@ -25,15 +25,12 @@ const Dashboard: React.FC<DashboardProps> = ({
   disabled
 }) => {
   return (
-    <div className="w-full md:w-80 bg-gray-900 border-r border-gray-800 p-6 flex flex-col gap-8 h-full shadow-xl z-10">
+    <div className="w-full h-full bg-gray-900 p-6 flex flex-col gap-6 overflow-y-auto shadow-xl z-10">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+        <h1 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
           <Settings className="w-6 h-6 text-blue-500" />
           Merge Sort
         </h1>
-        <p className="text-gray-400 text-sm">
-          Interactive visualization of the Merge Sort algorithm using physical separation.
-        </p>
       </div>
 
       {/* Controls */}
@@ -93,24 +90,22 @@ const Dashboard: React.FC<DashboardProps> = ({
           <div className="flex justify-between items-center">
             <label className="text-sm font-medium text-gray-300">Animation Speed</label>
             <span className="text-xs bg-gray-800 px-2 py-1 rounded text-gray-400">
-               {speed < 100 ? 'Fast' : speed > 800 ? 'Slow' : 'Normal'}
+               {speed < 150 ? 'Fast' : speed > 1500 ? 'Slow' : 'Normal'}
             </span>
           </div>
           {/* Speed: Higher value = Slower (more delay) */}
-          {/* Slider: Left (low value) = Slow? Or Left = Fast? */}
-          {/* Usually Right = Fast. So we invert logic for slider display vs value */}
-          {/* Let's say Slider 0-100. 0 = Slow (1000ms), 100 = Fast (50ms) */}
+          {/* Range: 1ms (Fast) to 2500ms (Slow) */}
+          {/* Slider: 0 (Slow, 2500ms) to 100 (Fast, 1ms) */}
           <input
             type="range"
             min="0"
             max="100"
-            value={100 - ((speed - 50) / (1000 - 50)) * 100}
+            value={100 - ((speed - 1) / (2500 - 1)) * 100}
             onChange={(e) => {
               const val = Number(e.target.value);
-              // Convert 0-100 back to 1000-50
-              // val = 100 -> speed = 50
-              // val = 0 -> speed = 1000
-              const newSpeed = 1000 - (val / 100) * (950);
+              // val = 100 -> speed = 1
+              // val = 0 -> speed = 2500
+              const newSpeed = 2500 - (val / 100) * (2499);
               setSpeed(newSpeed);
             }}
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
